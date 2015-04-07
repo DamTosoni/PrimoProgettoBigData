@@ -36,14 +36,14 @@ Reducer<Text, IntWritable, Text, IntWritable> {
 	@Override
 	protected void cleanup(Context ctx) 
 			throws IOException, InterruptedException {
-		List<Pair> topKPairs = new ArrayList<Pair>();
+		List<Pair> pairs = new ArrayList<Pair>();
 		while (!queue.isEmpty()) {
-			topKPairs.add(queue.remove());
+			pairs.add(queue.remove());
 		}
-		for (int i = topKPairs.size() - 1; i >= 0; i--) {
-			Pair topKPair = topKPairs.get(i);
-			ctx.write(new Text(topKPair.item), 
-					new IntWritable(topKPair.quantity));
+		for (int i = pairs.size() - 1; i >= 0; i--) {
+			Pair pair = pairs.get(i);
+			ctx.write(new Text(pair.item), 
+					new IntWritable(pair.quantity));
 		}
 	}
 
