@@ -11,18 +11,18 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 public class SalesTrend {
 
 	public static void main(String[] args) throws Exception {
-		
+
 		Path input = new Path(args[0]);
-	    Path temp1 = new Path("temp");
-	    Path output = new Path(args[1]);
-	    
-	    
+		Path temp1 = new Path("temp");
+		Path output = new Path(args[1]);
+
+
 		//Calcolo delle vendite per ogni prodotto
 		Job job1 = new Job(new Configuration(), "SalesQuantities");
 
 		job1.setJarByClass(SalesTrend.class);
-	    
-	    FileInputFormat.addInputPath(job1, input);
+
+		FileInputFormat.addInputPath(job1, input);
 		FileOutputFormat.setOutputPath(job1, temp1);
 
 		job1.setMapperClass(SalesTrendQuantityMapper.class);
@@ -32,9 +32,9 @@ public class SalesTrend {
 		job1.setOutputValueClass(IntWritable.class);
 
 		boolean succ = job1.waitForCompletion(true);
-	    if (!succ) {
-	      System.out.println("Job1 failed");
-	    }
+		if (!succ) {
+			System.out.println("Job1 failed");
+		}
 
 		//Ordinamento decrescente
 		Job job2= new Job(new Configuration(), "SalesRanker");
@@ -51,8 +51,8 @@ public class SalesTrend {
 		job2.setOutputValueClass(IntWritable.class);
 
 		succ = job2.waitForCompletion(true);
-	    if (!succ) {
-	      System.out.println("Job2 failed");
-	    }
+		if (!succ) {
+			System.out.println("Job2 failed");
+		}
 	}
 }
