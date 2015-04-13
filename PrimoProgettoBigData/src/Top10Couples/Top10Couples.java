@@ -27,9 +27,7 @@ public class Top10Couples {
 		job.setMapperClass(Top10CouplesMapper.class);
 		job.setCombinerClass(Top10CouplesReducer.class);
 
-		// FIXME: Uso un solo reducer per evitare di avere due job (verificare cosa
-		// succede per input enormi)
-		job.setNumReduceTasks(1);
+		job.setNumReduceTasks(1); // un solo reducer per evitare che ognuno calcoli la sua top 10
 		job.setReducerClass(Top10CouplesReducer.class);
 
 		job.setOutputKeyClass(Text.class);
@@ -45,5 +43,4 @@ public class Top10Couples {
 
 		System.exit(job.waitForCompletion(true) ? 0 : 1);
 	}
-
 }
