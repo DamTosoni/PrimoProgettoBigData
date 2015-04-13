@@ -1,4 +1,4 @@
-package Top10Couples;
+package CouplesFrequency;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -14,7 +14,7 @@ import org.apache.hadoop.mapreduce.Mapper;
  * reducer per effettuare il conteggio
  *
  */
-public class Top10CouplesMapper extends
+public class CouplesFrequencyMapper extends
 		Mapper<Object, Text, Text, IntWritable> {
 
 	private static final IntWritable one = new IntWritable(1);

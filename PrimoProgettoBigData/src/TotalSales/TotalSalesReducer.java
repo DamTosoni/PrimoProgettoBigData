@@ -14,11 +14,11 @@ public class TotalSalesReducer extends
 Reducer<Text, IntWritable, Text, IntWritable> {
 
 	private class Pair {
-		public String items;
+		public String item;
 		public Integer quantity;
 
-		public Pair(String items, Integer quantity) {
-			this.items = items;
+		public Pair(String item, Integer quantity) {
+			this.item = item;
 			this.quantity = quantity;
 		}
 	};
@@ -42,7 +42,7 @@ Reducer<Text, IntWritable, Text, IntWritable> {
 		}
 		for (int i = pairs.size() - 1; i >= 0; i--) {
 			Pair pair = pairs.get(i);
-			ctx.write(new Text(pair.items), 
+			ctx.write(new Text(pair.item), 
 					new IntWritable(pair.quantity));
 		}
 	}

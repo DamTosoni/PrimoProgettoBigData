@@ -1,4 +1,4 @@
-package Top10Couples;
+package CouplesFrequency;
 
 import java.io.IOException;
 
@@ -10,7 +10,7 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-public class Top10Couples {
+public class CouplesFrequency {
 
 	public static void main(String[] args) throws ClassNotFoundException,
 			IOException, InterruptedException {
@@ -23,14 +23,11 @@ public class Top10Couples {
 		Configuration conf = new Configuration();
 		Job job = Job.getInstance(conf, "Top 10 Couples");
 
-		job.setJarByClass(Top10Couples.class);
-		job.setMapperClass(Top10CouplesMapper.class);
-		job.setCombinerClass(Top10CouplesReducer.class);
+		job.setJarByClass(CouplesFrequency.class);
+		job.setMapperClass(CouplesFrequencyMapper.class);
+		job.setCombinerClass(CouplesFrequencyReducer.class);
 
-		// FIXME: Uso un solo reducer per evitare di avere due job (verificare cosa
-		// succede per input enormi)
-		job.setNumReduceTasks(1);
-		job.setReducerClass(Top10CouplesReducer.class);
+		job.setReducerClass(CouplesFrequencyReducer.class);
 
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(IntWritable.class);
