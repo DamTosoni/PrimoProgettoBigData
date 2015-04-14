@@ -8,12 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 
-import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
 public class CouplesFrequencyReducer extends
-		Reducer<Text, IntWritable, Text, IntWritable> {
+		Reducer<Text, ProductsListWritable, Text, DoubleWritable> {
 
 	private static int TOP_K = 10;
 	private PriorityQueue<Couple> queue;
@@ -64,7 +64,7 @@ public class CouplesFrequencyReducer extends
 		/* Riestraggo gli elementi al contrario per avere il giusto ordinamento */
 		for (int i = topKCouples.size() - 1; i >= 0; i--) {
 			Couple topKCouple = topKCouples.get(i);
-			context.write(new Text(topKCouple.couple), new IntWritable(
+			context.write(new Text(topKCouple.couple), new DoubleWritable(
 					topKCouple.percentage));
 		}
 	}
