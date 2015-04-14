@@ -51,10 +51,6 @@ public class CouplesFrequencyReducer extends
 			if (queue.size() > TOP_K) {
 				queue.remove();
 			}
-
-			// context.write(new Text(key.toString() + "," + product),
-			// new IntWritable(productToOccurence.get(product)
-			// / productTotalCount));
 		}
 	}
 
