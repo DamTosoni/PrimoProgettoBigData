@@ -29,6 +29,11 @@ public class ProductsListWritable implements Writable {
 
 	@Override
 	public String toString() {
+		
+		if (productList.length == 0) {
+			return "";
+		}
+		
 		String result = "";
 		int i;
 
@@ -38,6 +43,7 @@ public class ProductsListWritable implements Writable {
 
 		result += productList[i];
 		return result;
+		
 	}
 
 	public static ProductsListWritable read(DataInput in) throws IOException {

@@ -35,8 +35,13 @@ public class CouplesFrequencyReducer extends
 		for (ProductsListWritable value : values) {
 			productTotalCount++;
 			for (String product : value.getProductList()) {
-				productToOccurence.put(product,
-						productToOccurence.get(product) + 1);
+				if (!productToOccurence.containsKey(product)) {
+					productToOccurence.put(product,
+							new Integer(1));
+				} else {
+					productToOccurence.put(product,
+							productToOccurence.get(product) + 1);
+				}		
 			}
 		}
 

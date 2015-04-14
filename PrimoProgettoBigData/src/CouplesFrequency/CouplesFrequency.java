@@ -28,8 +28,8 @@ public class CouplesFrequency {
 
 		job.setReducerClass(CouplesFrequencyReducer.class);
 
-		//job.setOutputKeyClass(Text.class);
-		//job.setOutputValueClass(DoubleWritable.class);
+		job.setOutputKeyClass(Text.class);
+		job.setOutputValueClass(ProductsListWritable.class);
 
 		try {
 			FileInputFormat.addInputPath(job, new Path(args[0]));
