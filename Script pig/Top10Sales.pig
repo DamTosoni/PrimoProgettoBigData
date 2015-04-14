@@ -1,4 +1,3 @@
-REGISTER myudfs.jar;
 sales = LOAD 'Sales.txt' USING PigStorage('\n');
 
 /*Genero tutte le possibili coppie*/
