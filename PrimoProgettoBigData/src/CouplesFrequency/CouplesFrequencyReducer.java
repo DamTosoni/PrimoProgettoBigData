@@ -1,6 +1,12 @@
 package CouplesFrequency;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
@@ -9,15 +15,62 @@ import org.apache.hadoop.mapreduce.Reducer;
 public class CouplesFrequencyReducer extends
 		Reducer<Text, IntWritable, Text, IntWritable> {
 
-	public void reduce(Text key, Iterable<IntWritable> values, Context context)
-			throws IOException, InterruptedException {
+	private static int TOP_K = 10;
+	private PriorityQueue<Couple> queue;
 
-		/* Incremento le vendite */
-		int sales = 0;
-		for (IntWritable value : values) {
-			sales = sales + value.get();
+	@Override
+	protected void setup(Context ctx) {
+		queue = new PriorityQueue<Couple>(TOP_K, new Comparator<Couple>() {
+			public int compare(Couple c1, Couple c2) {
+				return c1.percentage.compareTo(c2.percentage);
+			}
+		});
+	}
+
+	public void reduce(Text key, Iterable<ProductsListWritable> values,
+			Context context) throws IOException, InterruptedException {
+
+		int productTotalCount = 0;
+		Map<String, Integer> productToOccurence = new HashMap<String, Integer>();
+		for (ProductsListWritable value : values) {
+			productTotalCount++;
+			for (String product : value.getProductList()) {
+				productToOccurence.put(product,
+						productToOccurence.get(product) + 1);
+			}
 		}
-		context.write(key, new IntWritable(sales));
+
+		/*
+		 * A questo punto per ogni prodotto trovato calcolo e scrivo la
+		 * percentuale
+		 */
+		for (String product : productToOccurence.keySet()) {
+
+			queue.add(new Couple(key.toString() + "," + product,
+					productToOccurence.get(product) / productTotalCount));
+			if (queue.size() > TOP_K) {
+				queue.remove();
+			}
+
+			// context.write(new Text(key.toString() + "," + product),
+			// new IntWritable(productToOccurence.get(product)
+			// / productTotalCount));
+		}
+	}
+
+	@Override
+	protected void cleanup(Context context) throws IOException,
+			InterruptedException {
+		List<Couple> topKCouples = new ArrayList<Couple>();
+		while (!queue.isEmpty()) {
+			topKCouples.add(queue.remove());
+		}
+		/* Riestraggo gli elementi al contrario per avere il giusto ordinamento */
+		for (int i = topKCouples.size() - 1; i >= 0; i--) {
+			Couple topKCouple = topKCouples.get(i);
+			context.write(new Text(topKCouple.couple), new IntWritable(
+					topKCouple.percentage));
+		}
 	}
 
 }

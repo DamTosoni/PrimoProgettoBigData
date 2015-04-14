@@ -25,7 +25,6 @@ public class CouplesFrequency {
 
 		job.setJarByClass(CouplesFrequency.class);
 		job.setMapperClass(CouplesFrequencyMapper.class);
-		job.setCombinerClass(CouplesFrequencyReducer.class);
 
 		job.setReducerClass(CouplesFrequencyReducer.class);
 
