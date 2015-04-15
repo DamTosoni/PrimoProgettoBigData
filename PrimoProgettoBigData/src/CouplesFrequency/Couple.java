@@ -7,9 +7,9 @@ package CouplesFrequency;
  */
 public class Couple {
 	public String couple;
-	public Integer percentage;
+	public Double percentage;
 
-	public Couple(String couple, Integer percentage) {
+	public Couple(String couple, Double percentage) {
 		this.couple = couple;
 		this.percentage = percentage;
 	}

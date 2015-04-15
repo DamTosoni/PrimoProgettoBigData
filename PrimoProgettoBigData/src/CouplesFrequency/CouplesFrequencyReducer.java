@@ -30,18 +30,20 @@ public class CouplesFrequencyReducer extends
 	public void reduce(Text key, Iterable<ProductsListWritable> values,
 			Context context) throws IOException, InterruptedException {
 
-		int productTotalCount = 0;
+		double productTotalCount = 0;
 		Map<String, Integer> productToOccurence = new HashMap<String, Integer>();
 		for (ProductsListWritable value : values) {
 			productTotalCount++;
 			for (String product : value.getProductList()) {
-				if (!productToOccurence.containsKey(product)) {
-					productToOccurence.put(product,
-							new Integer(1));
-				} else {
-					productToOccurence.put(product,
-							productToOccurence.get(product) + 1);
-				}		
+				if (!product.isEmpty()) {
+					if (!productToOccurence.containsKey(product)
+							&& !product.isEmpty()) {
+						productToOccurence.put(product, new Integer(1));
+					} else {
+						productToOccurence.put(product,
+								productToOccurence.get(product) + 1);
+					}
+				}
 			}
 		}
 
