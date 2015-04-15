@@ -2,9 +2,8 @@ REGISTER myudfs.jar;
 
 sales = LOAD 'Sales.txt' USING PigStorage('\n');
 
-/*Genero tutte le possibili coppie*/
-coppie = FOREACH sales GENERATE myudfs.CreateCouples($0);
+/*Genero tutte le possibili combinazioni per ogni riga*/
+combinations = FOREACH sales GENERATE myudfs.CreateCombinations($0);
 
 
-store coppie into 'LessThen5';
-
+store combinations into 'LessThen5';
