@@ -21,8 +21,7 @@ public class CouplesFrequencyCombiner extends
 					productToOccurence.put(product.getProduct(), new Integer(
 							product.getOccurrence()));
 				} else {
-					productToOccurence.put(
-							product.getProduct(),
+					productToOccurence.put(product.getProduct(),
 							productToOccurence.get(product.getProduct())
 									+ product.getOccurrence());
 				}
