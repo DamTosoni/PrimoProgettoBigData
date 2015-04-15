@@ -28,11 +28,12 @@ public class CouplesFrequencyMapper extends
 			 * Per ogni prodotto costruisco la lista di prodotti venduti insieme
 			 * ad esso
 			 */
-			String[] productList = new String[products.length - 1];
-			int i = 0;
+			CoupleProductOccurrence[] productList = new CoupleProductOccurrence[products.length];
+			productList[0] = new CoupleProductOccurrence("TOTALROWS", 1);
+			int i = 1;
 			for (String product2 : products) {
 				if (!product.equals(product2)) {
-					productList[i] = product2;
+					productList[i] = new CoupleProductOccurrence(product2, 1);
 					i++;
 				}
 			}

@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
@@ -21,10 +20,12 @@ public class CouplesFrequency {
 		}
 
 		Configuration conf = new Configuration();
-		Job job = Job.getInstance(conf, "Top 10 Couples");
+		Job job = Job.getInstance(conf, "Couples Frequency");
 
 		job.setJarByClass(CouplesFrequency.class);
 		job.setMapperClass(CouplesFrequencyMapper.class);
+
+		job.setCombinerClass(CouplesFrequencyCombiner.class);
 
 		job.setReducerClass(CouplesFrequencyReducer.class);
 

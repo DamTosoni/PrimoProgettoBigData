@@ -5,11 +5,11 @@ package CouplesFrequency;
  * la coppia di prodotti e l'effettiva quantita' venduta
  *
  */
-public class Couple {
+public class CouplePercentage {
 	public String couple;
 	public Double percentage;
 
-	public Couple(String couple, Double percentage) {
+	public CouplePercentage(String couple, Double percentage) {
 		this.couple = couple;
 		this.percentage = percentage;
 	}

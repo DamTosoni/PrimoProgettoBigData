@@ -16,15 +16,16 @@ public class CouplesFrequencyReducer extends
 		Reducer<Text, ProductsListWritable, Text, DoubleWritable> {
 
 	private static int TOP_K = 10;
-	private PriorityQueue<Couple> queue;
+	private PriorityQueue<CouplePercentage> queue;
 
 	@Override
 	protected void setup(Context ctx) {
-		queue = new PriorityQueue<Couple>(TOP_K, new Comparator<Couple>() {
-			public int compare(Couple c1, Couple c2) {
-				return c1.percentage.compareTo(c2.percentage);
-			}
-		});
+		queue = new PriorityQueue<CouplePercentage>(TOP_K,
+				new Comparator<CouplePercentage>() {
+					public int compare(CouplePercentage c1, CouplePercentage c2) {
+						return c1.percentage.compareTo(c2.percentage);
+					}
+				});
 	}
 
 	public void reduce(Text key, Iterable<ProductsListWritable> values,
@@ -33,16 +34,17 @@ public class CouplesFrequencyReducer extends
 		double productTotalCount = 0;
 		Map<String, Integer> productToOccurence = new HashMap<String, Integer>();
 		for (ProductsListWritable value : values) {
-			productTotalCount++;
-			for (String product : value.getProductList()) {
-				if (!product.isEmpty()) {
-					if (!productToOccurence.containsKey(product)
-							&& !product.isEmpty()) {
-						productToOccurence.put(product, new Integer(1));
+			for (CoupleProductOccurrence product : value.getProductList()) {
+				if (!product.getProduct().equals("TOTALROWS")) {
+					if (!productToOccurence.containsKey(product)) {
+						productToOccurence.put(product.getProduct(),
+								new Integer(product.getOccurrence()));
 					} else {
-						productToOccurence.put(product,
+						productToOccurence.put(product.getProduct(),
 								productToOccurence.get(product) + 1);
 					}
+				} else {
+					productTotalCount += product.getOccurrence();
 				}
 			}
 		}
@@ -53,7 +55,7 @@ public class CouplesFrequencyReducer extends
 		 */
 		for (String product : productToOccurence.keySet()) {
 
-			queue.add(new Couple(key.toString() + "," + product,
+			queue.add(new CouplePercentage(key.toString() + "," + product,
 					productToOccurence.get(product) / productTotalCount));
 			if (queue.size() > TOP_K) {
 				queue.remove();
@@ -64,13 +66,13 @@ public class CouplesFrequencyReducer extends
 	@Override
 	protected void cleanup(Context context) throws IOException,
 			InterruptedException {
-		List<Couple> topKCouples = new ArrayList<Couple>();
+		List<CouplePercentage> topKCouples = new ArrayList<CouplePercentage>();
 		while (!queue.isEmpty()) {
 			topKCouples.add(queue.remove());
 		}
 		/* Riestraggo gli elementi al contrario per avere il giusto ordinamento */
 		for (int i = topKCouples.size() - 1; i >= 0; i--) {
-			Couple topKCouple = topKCouples.get(i);
+			CouplePercentage topKCouple = topKCouples.get(i);
 			context.write(new Text(topKCouple.couple), new DoubleWritable(
 					topKCouple.percentage));
 		}
