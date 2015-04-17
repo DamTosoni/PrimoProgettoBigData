@@ -1,4 +1,5 @@
 sales = LOAD 'Sales.txt' USING PigStorage('\n');
+
 flattenSales = FOREACH sales GENERATE FLATTEN(TOKENIZE($0)),$0;
 filteredSales = FILTER flattenSales BY NOT(STARTSWITH($0,'2'));
 
