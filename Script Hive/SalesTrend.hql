@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS sales (row STRING);
 
-LOAD DATA LOCAL INPATH 'Sales_old.txt' OVERWRITE INTO TABLE sales;
+LOAD DATA LOCAL INPATH 'Sales.txt' OVERWRITE INTO TABLE sales;
 
 -- Creo una vista che contiene i valori di sales divisi e riportati in un array --
 CREATE VIEW IF NOT EXISTS salesArray (product, rowArray)
@@ -31,7 +31,6 @@ GROUP BY product;
 INSERT OVERWRITE LOCAL DIRECTORY 'SalesTrendresult'
 SELECT salesArrayJanuary.product,CONCAT('1/2015:',salesArrayJanuary.sales,' 2/2015:',salesArrayFebruary.sales,' 3/2015:',salesArrayMarch.sales)
 FROM salesArrayJanuary FULL OUTER JOIN salesArrayFebruary ON (salesArrayJanuary.product=salesArrayFebruary.product) FULL OUTER JOIN salesArrayMarch ON (salesArrayJanuary.product=salesArrayMarch.product);
-
 
 -- Elimino le tabelle una volta scritto il risultato --
 DROP VIEW salesArray;

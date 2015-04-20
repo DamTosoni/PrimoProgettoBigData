@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS sales (row STRING);
 
-LOAD DATA LOCAL INPATH 'Sales_old.txt' OVERWRITE INTO TABLE sales;
+LOAD DATA LOCAL INPATH 'Sales.txt' OVERWRITE INTO TABLE sales;
 
 -- SalesArray contiene gli stessi dati di sales sotto forma di array --
 INSERT OVERWRITE LOCAL DIRECTORY 'TotalSalesresult'
