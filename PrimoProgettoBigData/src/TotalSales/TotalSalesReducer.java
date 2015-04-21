@@ -13,13 +13,13 @@ import org.apache.hadoop.mapreduce.Reducer;
 import TotalSales.Pair;
 
 public class TotalSalesReducer extends
-Reducer<Text, IntWritable, Text, IntWritable> {
+		Reducer<Text, IntWritable, Text, IntWritable> {
 
 	private PriorityQueue<Pair> queue;
 
 	@Override
 	protected void setup(Context ctx) {
-		queue = new PriorityQueue<Pair>(new Comparator<Pair>() {
+		queue = new PriorityQueue<Pair>(11, new Comparator<Pair>() {
 			public int compare(Pair p1, Pair p2) {
 				return p1.sales.compareTo(p2.sales);
 			}
@@ -52,9 +52,9 @@ Reducer<Text, IntWritable, Text, IntWritable> {
 		}
 		/* Riestraggo gli elementi al contrario per avere il giusto ordinamento */
 		for (int i = topPairs.size() - 1; i >= 0; i--) {
-			Pair topKPair = topPairs.get(i);
-			context.write(new Text(topKPair.couple), new IntWritable(
-					topKPair.sales));
+			Pair topPair = topPairs.get(i);
+			context.write(new Text(topPair.couple), new IntWritable(
+					topPair.sales));
 		}
 	}
 }
