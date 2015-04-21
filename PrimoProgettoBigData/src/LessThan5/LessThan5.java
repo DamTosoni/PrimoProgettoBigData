@@ -21,7 +21,7 @@ public class LessThan5 {
 		}
 
 		Configuration conf = new Configuration();
-		Job job = Job.getInstance(conf, "Top 10 Couples");
+		Job job = Job.getInstance(conf, "LessThan5");
 
 		job.setJarByClass(LessThan5.class);
 		job.setMapperClass(LessThan5Mapper.class);

@@ -24,8 +24,9 @@ public class CouplesFrequency {
 
 		job.setJarByClass(CouplesFrequency.class);
 		job.setMapperClass(CouplesFrequencyMapper.class);
-
 		job.setCombinerClass(CouplesFrequencyCombiner.class);
+		
+		job.setNumReduceTasks(1); // un solo reducer per evitare che ognuno calcoli la sua top 10
 
 		job.setReducerClass(CouplesFrequencyReducer.class);
 
