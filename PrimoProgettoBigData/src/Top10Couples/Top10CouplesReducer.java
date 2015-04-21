@@ -58,5 +58,4 @@ public class Top10CouplesReducer extends
 					topKPair.sales));
 		}
 	}
-
 }

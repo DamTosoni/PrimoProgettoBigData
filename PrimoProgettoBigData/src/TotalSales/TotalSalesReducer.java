@@ -10,50 +10,51 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
+import TotalSales.Pair;
+
 public class TotalSalesReducer extends
 Reducer<Text, IntWritable, Text, IntWritable> {
 
-	private class Pair {
-		public String item;
-		public Integer quantity;
-
-		public Pair(String item, Integer quantity) {
-			this.item = item;
-			this.quantity = quantity;
-		}
-	};
 	private PriorityQueue<Pair> queue;
 
 	@Override
 	protected void setup(Context ctx) {
 		queue = new PriorityQueue<Pair>(new Comparator<Pair>() {
 			public int compare(Pair p1, Pair p2) {
-				return p1.quantity.compareTo(p2.quantity);
+				return p1.sales.compareTo(p2.sales);
 			}
 		});
 	}
 
-	@Override
-	protected void cleanup(Context ctx) 
+	public void reduce(Text key, Iterable<IntWritable> values, Context context)
 			throws IOException, InterruptedException {
-		List<Pair> pairs = new ArrayList<Pair>();
-		while (!queue.isEmpty()) {
-			pairs.add(queue.remove());
+
+		/* Incremento le vendite */
+		int sales = 0;
+		for (IntWritable value : values) {
+			sales = sales + value.get();
 		}
-		for (int i = pairs.size() - 1; i >= 0; i--) {
-			Pair pair = pairs.get(i);
-			ctx.write(new Text(pair.item), 
-					new IntWritable(pair.quantity));
-		}
+		/* Aggiungo la coppia alla coda ed elimino gli elementi eccedenti */
+		queue.add(new Pair(key.toString(), sales));
 	}
 
-	public void reduce(Text key, Iterable<IntWritable> values, Context context) 
-			throws IOException, InterruptedException {
-
-		int count = 0;
-		for (IntWritable value : values) {
-			count = count + value.get();
+	/**
+	 * Una volta terminato il task per questo reducer posso scrivere il
+	 * risultato svuotando la coda
+	 * 
+	 */
+	@Override
+	protected void cleanup(Context context) throws IOException,
+			InterruptedException {
+		List<Pair> topPairs = new ArrayList<Pair>();
+		while (!queue.isEmpty()) {
+			topPairs.add(queue.remove());
 		}
-		queue.add(new Pair(key.toString(), count));
+		/* Riestraggo gli elementi al contrario per avere il giusto ordinamento */
+		for (int i = topPairs.size() - 1; i >= 0; i--) {
+			Pair topKPair = topPairs.get(i);
+			context.write(new Text(topKPair.couple), new IntWritable(
+					topKPair.sales));
+		}
 	}
 }
