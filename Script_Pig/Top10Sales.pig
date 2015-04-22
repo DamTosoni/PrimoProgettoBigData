@@ -2,39 +2,25 @@ sales = LOAD 'Sales.txt' USING PigStorage('\n');
 
 /*Genero tutte le possibili coppie*/
 flattenSales = FOREACH sales GENERATE FLATTEN(TOKENIZE($0)),$0;
+
+/* Filtro i risultati per togliere le date dai prodotti */
 filteredSales = FILTER flattenSales BY NOT(STARTSWITH($0,'2'));
-groupedProducts = GROUP filteredSales BY $0;
-products = FOREACH groupedProducts GENERATE $0;
-products2 = FOREACH groupedProducts GENERATE $0;
-couples = CROSS products, products2;
-couplesFiltered = FILTER couples BY NOT($0 == $1);
+filteredSalesCopy = FILTER flattenSales BY NOT(STARTSWITH($0,'2'));;
 
-/*Affianco ad ogni coppia tutte le vendite*/
-flattenSalesLists = DISTINCT (FOREACH flattenSales GENERATE $1);
-couples2salesLists = CROSS couplesFiltered, flattenSalesLists;
+/* Eseguo il JOIN per costruire le coppie di prodotti */
+salesJoined = JOIN filteredSales by $1, filteredSalesCopy by $1;
 
-/*Lascio solo le coppie esistenti*/
-existingCouples = FILTER couples2salesLists BY ($2 matches SPRINTF('.*%s.*%s.*',$0,$1)) OR ($2 matches  SPRINTF('.*%s.*%s.*',$1,$0));
+/* Filtro i prodotti per eliminare le coppie di prodotti uguali e quelle invertite */
+salesJoinedFiltered = FILTER salesJoined BY $0!=$2 AND $0<$2;
 
-/*Conto*/
-existingCouplesGrouped = GROUP existingCouples BY ($0,$1);
-couplesGrouped2salesLists = FOREACH existingCouplesGrouped GENERATE $0,SIZE($1);
+/* Genero le coppie e le raggruppo */
+couples = FOREACH salesJoinedFiltered GENERATE SPRINTF('%s,%s',$0,$2),$1;
+groupedCouples = GROUP couples BY ($0);
+couplesSales = FOREACH groupedCouples GENERATE $0,SIZE($1);
 
-/*Ordino*/
-sorted = ORDER couplesGrouped2salesLists BY $1 desc;
+/* Ordino, filtro e costruisco l'output */
+orderedCouplesSales = ORDER couplesSales BY $1 desc;
+limitedCouplesSales = LIMIT orderedCouplesSales 10;
+top10Sales =  FOREACH limitedCouplesSales GENERATE SPRINTF('%s,%s',$0,$1);
 
-/*Elimino i duplicati*/
-flattenedSorted = FOREACH sorted GENERATE FLATTEN($0),$1;
-
-/*Ordino alfabeticamente i primi due campi in modo da poter poi filtrare*/
-alphabethicallySorted = FOREACH flattenedSorted GENERATE ($0 < $1? ($0,$1,$2):($1,$0,$2));
-distincted = DISTINCT (FOREACH alphabethicallySorted GENERATE FLATTEN($0));
-orderedDistincted = ORDER distincted BY $2 desc;
-
-/*Limito ai primi 10*/
-limited = LIMIT orderedDistincted 10;
-
-result = FOREACH limited GENERATE SPRINTF('%s,%s,%s',$0,$1,$2);
-
-store result into 'Top10SalesResult';
-
+store top10Sales into 'Top10SalesResult';
