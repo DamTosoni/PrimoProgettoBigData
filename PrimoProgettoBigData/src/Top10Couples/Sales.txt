@@ -1,5 +1,0 @@
-20150321,uova,latte,pane,vino
-20150218,pesce,pane,insalata,formaggio
-20150219,pesce,pane,insalata,formaggio
-20150322,uova,latte,pane,vino
-20150323,uova,latte,pane
