@@ -19,7 +19,7 @@ AS SELECT product, COUNT(row) as totalsales
 FROM salesSplitted
 GROUP BY product;
 
-INSERT OVERWRITE LOCAL DIRECTORY 'CouplesFrequencyresult'
+INSERT OVERWRITE LOCAL DIRECTORY 'CouplesFrequencyResult'
 SELECT couplesSales.couple, couplesSales.sales/totalSales.totalsales as percentual
 FROM couplesSales JOIN totalSales ON couplesSales.product1==totalSales.product
 SORT BY percentual DESC

@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS sales (row STRING);
 
-LOAD DATA LOCAL INPATH 'Sales_old.txt' OVERWRITE INTO TABLE sales;
+LOAD DATA LOCAL INPATH 'Sales.txt' OVERWRITE INTO TABLE sales;
 
 -- Creo una vista che contiene i prodotti e le righe in cui compaiono --
 
@@ -13,7 +13,7 @@ AS SELECT products
 FROM (SELECT row, createCombination(row) as rowArray FROM sales) as sales2 LATERAL VIEW explode(rowArray) tableExploded AS products;
 
 -- Scrivo il risultato --
-INSERT OVERWRITE LOCAL DIRECTORY 'LessThan5result'
+INSERT OVERWRITE LOCAL DIRECTORY 'LessThan5Result'
 SELECT products, COUNT(*) as sales
 FROM salesSplitted
 GROUP BY products

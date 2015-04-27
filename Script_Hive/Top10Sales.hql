@@ -9,7 +9,7 @@ FROM (SELECT row, split(row,',') as rowArray FROM sales) as sales2 LATERAL VIEW 
 WHERE product NOT LIKE '20%';
 
 -- Scrivo il risultato --
-INSERT OVERWRITE LOCAL DIRECTORY 'Top10Salesresult'
+INSERT OVERWRITE LOCAL DIRECTORY 'Top10SalesResult'
 SELECT concat(s1.product, ',' ,s2.product) as couples, COUNT(*) as sales
 FROM salesSplitted s1, salesSplitted s2
 WHERE s1.product<s2.product AND s1.row == s2.row
