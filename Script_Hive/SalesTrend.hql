@@ -33,18 +33,13 @@ CREATE VIEW IF NOT EXISTS salesJanuaryFebruary (product,salesJanuary, salesFebru
     COALESCE(salesArrayJanuary.product,salesArrayFebruary.product), salesArrayJanuary.sales as salesJanuary,salesArrayFebruary.sales as salesFebruary
   FROM salesArrayJanuary FULL OUTER JOIN salesArrayFebruary ON (salesArrayJanuary.product=salesArrayFebruary.product);
 
-CREATE VIEW IF NOT EXISTS salesFebruaryMarch (product,salesFebruary,salesMarch)
-  AS SELECT
-    COALESCE(salesArrayFebruary.product,salesArrayMarch.product), salesArrayFebruary.sales as salesFebruary,salesArrayMarch.sales as salesMarch
-  FROM salesArrayFebruary FULL OUTER JOIN salesArrayMarch ON (salesArrayFebruary.product=salesArrayMarch.product);
-
--- Unisco le due viste --
+-- Creo il risultato --
 INSERT OVERWRITE LOCAL DIRECTORY 'SalesTrendResult'
-SELECT COALESCE(salesJanuaryFebruary.product,salesFebruaryMarch.product),
+SELECT COALESCE(salesJanuaryFebruary.product,salesArrayMarch.product),
 	CONCAT('1/2015:',COALESCE(salesJanuaryFebruary.salesJanuary,0),
-	' 2/2015:',COALESCE(salesJanuaryFebruary.salesFebruary,salesFebruaryMarch.salesFebruary,0),
-	' 3/2015:',COALESCE(salesFebruaryMarch.salesMarch,0))
-FROM salesJanuaryFebruary FULL OUTER JOIN salesFebruaryMarch ON (salesJanuaryFebruary.product=salesFebruaryMarch.product);
+	' 2/2015:',COALESCE(salesJanuaryFebruary.salesFebruary,0),
+	' 3/2015:',COALESCE(salesArrayMarch.sales,0))
+FROM salesJanuaryFebruary FULL OUTER JOIN salesArrayMarch ON (salesJanuaryFebruary.product=salesArrayMarch.product);
 
 -- Elimino le tabelle una volta scritto il risultato --
 DROP VIEW salesArray;
