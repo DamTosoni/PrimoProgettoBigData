@@ -19,5 +19,6 @@ combinationsGrouped2salesLists = FOREACH combinationsGrouped GENERATE $0,SIZE($1
 
 /*Ordino*/
 result = ORDER combinationsGrouped2salesLists BY $1 desc;
+limitedResult = LIMIT result 10;
 
-store result into 'LessThen5';
+store limitedResult into 'LessThen5';
