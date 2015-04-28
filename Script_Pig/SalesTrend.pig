@@ -19,8 +19,12 @@ resultThirdMonth = FOREACH groupedProductsThirdMonth GENERATE $0,SPRINTF('3/2015
 
 /* Eseguo il join delle tre relazioni per ottenere il risultato finale */
 resultTwoMonths = JOIN resultFirstMonth BY $0 FULL, resultSecondMonth BY $0;
-result = JOIN resultTwoMonths BY $0 FULL, resultThirdMonth BY $0;
+/* Metto tutti i prodotti sul primo campo */
+resultTwoMonthsNoNullProduct = FOREACH resultTwoMonths GENERATE ($0 is not null?$0:$2),$1,$3;
 
-formattedResult = FOREACH result GENERATE ($0 is not null?$0:($2 is not null?$2:$4)),($1 is not null?$1:'1/2015:0'),($3 is not null?$3:'2/2015:0'),($5 is not null?$5:'3/2015:0');
+/* Eseguo l'ultimo job e formatto il risultato */
+result = JOIN resultTwoMonthsNoNullProduct BY $0 FULL, resultThirdMonth BY $0;
+formattedResult = FOREACH result GENERATE ($0 is not null?$0:$3),($1 is not null?$1:'1/2015:0'),($2 is not null?$2:'2/2015:0'),($4 is not null?$4:'3/2015:0');
+
 
 store formattedResult into 'SalesTrendResult';
